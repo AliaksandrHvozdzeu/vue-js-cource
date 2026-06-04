@@ -1,6 +1,7 @@
 [![CI](https://github.com/AliaksandrHvozdzeu/vue-js-cource/actions/workflows/ci.yml/badge.svg)](https://github.com/AliaksandrHvozdzeu/vue-js-cource/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AliaksandrHvozdzeu_vue-js-cource&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=AliaksandrHvozdzeu_vue-js-cource)
 [![Release](https://img.shields.io/github/v/release/AliaksandrHvozdzeu/vue-js-cource)](https://github.com/AliaksandrHvozdzeu/vue-js-cource/releases)
+[![Vercel](https://img.shields.io/badge/Vercel-live-black?logo=vercel&logoColor=white)](https://vue-js-cource-92z9l289n-aliaksandr-hvozdzeu.vercel.app)
 
 # VueJSCource
 
