@@ -63,24 +63,33 @@ jobs:
       administration: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
       - name: Download build artifact
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dist
           path: dist
 
-      - name: Deploy to gh-pages branch
+      - name: Publish build to docs folder
         run: |
-          cd dist
-          cp index.html 404.html
-          git init -b gh-pages
+          rm -rf docs
+          mkdir -p docs
+          cp -r dist/. docs/
+          cp docs/index.html docs/404.html
+
+      - name: Commit and push docs
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "deploy: update GitHub Pages"
-          git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          git add docs
+          if git diff --staged --quiet; then
+            echo "No changes in docs folder."
+          else
+            git commit -m "deploy: update GitHub Pages [skip ci]"
+            git push
+          fi
 
       - name: Configure GitHub Pages source
         env:
@@ -89,13 +98,13 @@ jobs:
           if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
             gh api --method PUT "repos/${{ github.repository }}/pages" \
               -f build_type=legacy \
-              -f "source[branch]=gh-pages" \
-              -f "source[path]=/"
+              -f "source[branch]=main" \
+              -f "source[path]=/docs"
           else
             gh api --method POST "repos/${{ github.repository }}/pages" \
               -f build_type=legacy \
-              -f "source[branch]=gh-pages" \
-              -f "source[path]=/"
+              -f "source[branch]=main" \
+              -f "source[path]=/docs"
           fi
 
   release:
