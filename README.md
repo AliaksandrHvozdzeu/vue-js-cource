@@ -1,4 +1,8 @@
-# your-project-name
+[![CI](https://github.com/AliaksandrHvozdzeu/vue-js-cource/actions/workflows/ci.yml/badge.svg)](https://github.com/AliaksandrHvozdzeu/vue-js-cource/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AliaksandrHvozdzeu_vue-js-cource&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=AliaksandrHvozdzeu_vue-js-cource)
+[![Release](https://img.shields.io/github/v/release/AliaksandrHvozdzeu/vue-js-cource)](https://github.com/AliaksandrHvozdzeu/vue-js-cource/releases)
+
+# VueJSCource
 
 This template should help get you started developing with Vue 3 in Vite.
 
