@@ -68,7 +68,9 @@ jobs:
 
       - name: Read version
         id: version
-        run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+          echo "name=$(jq -r .name package.json)" >> "$GITHUB_OUTPUT"
 
       - name: Check if release already exists
         id: check
@@ -95,7 +97,7 @@ jobs:
         if: steps.check.outputs.should_release == 'true'
         run: |
           cd dist
-          zip -r "../your-project-name-${{ steps.version.outputs.version }}.zip" .
+          zip -r "../${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}.zip" .
 
       - name: Create GitHub Release
         if: steps.check.outputs.should_release == 'true'
@@ -104,4 +106,4 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
-          files: your-project-name-*.zip
+          files: ${{ steps.version.outputs.name }}-*.zip
