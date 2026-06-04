@@ -18,6 +18,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  administration: write
 
 jobs:
   test-and-build:
@@ -54,9 +55,16 @@ jobs:
           path: dist
           retention-days: 1
 
-      - name: Setup GitHub Pages
+      - name: Enable GitHub Pages
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
+            gh api --method PUT "repos/${{ github.repository }}/pages" -f build_type=workflow
+          else
+            gh api --method POST "repos/${{ github.repository }}/pages" -f build_type=workflow
+          fi
 
       - name: Upload GitHub Pages artifact
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
