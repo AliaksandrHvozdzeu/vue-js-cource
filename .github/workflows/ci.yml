@@ -18,6 +18,7 @@ concurrency:
 jobs:
   test-and-build:
     name: Lint, Test & Build
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,6 +44,10 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Add release metadata to artifact
+        if: github.event_name != 'pull_request'
+        run: cp package.json dist/package.json
 
       - name: Upload build artifact
         if: github.event_name != 'pull_request'
