@@ -59,8 +59,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write
-      administration: write
 
     steps:
       - name: Checkout
@@ -89,22 +87,6 @@ jobs:
           else
             git commit -m "deploy: update GitHub Pages [skip ci]"
             git push
-          fi
-
-      - name: Configure GitHub Pages source
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
-            gh api --method PUT "repos/${{ github.repository }}/pages" \
-              -f build_type=legacy \
-              -f "source[branch]=main" \
-              -f "source[path]=/docs"
-          else
-            gh api --method POST "repos/${{ github.repository }}/pages" \
-              -f build_type=legacy \
-              -f "source[branch]=main" \
-              -f "source[path]=/docs"
           fi
 
   release:
