@@ -14,6 +14,9 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   test-and-build:
     name: Lint, Test & Build
@@ -40,3 +43,65 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Upload build artifact
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  release:
+    name: Publish Release
+    needs: test-and-build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version
+        id: version
+        run: echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Check if release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists, skipping."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Release ${TAG} will be created."
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download build artifact
+        if: steps.check.outputs.should_release == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Archive production build
+        if: steps.check.outputs.should_release == 'true'
+        run: |
+          cd dist
+          zip -r "../your-project-name-${{ steps.version.outputs.version }}.zip" .
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: your-project-name-*.zip
