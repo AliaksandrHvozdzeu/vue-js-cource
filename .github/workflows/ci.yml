@@ -59,6 +59,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      administration: write
 
     steps:
       - name: Download build artifact
@@ -70,6 +72,7 @@ jobs:
       - name: Deploy to gh-pages branch
         run: |
           cd dist
+          cp index.html 404.html
           git init -b gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -78,6 +81,22 @@ jobs:
           git push -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Configure GitHub Pages source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/${{ github.repository }}/pages" >/dev/null 2>&1; then
+            gh api --method PUT "repos/${{ github.repository }}/pages" \
+              -f build_type=legacy \
+              -f "source[branch]=gh-pages" \
+              -f "source[path]=/"
+          else
+            gh api --method POST "repos/${{ github.repository }}/pages" \
+              -f build_type=legacy \
+              -f "source[branch]=gh-pages" \
+              -f "source[path]=/"
+          fi
 
   release:
     name: Publish Release
