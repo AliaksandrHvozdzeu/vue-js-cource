@@ -1,4 +1,4 @@
-Object.defineProperty(window, "scrollTo", {
+Object.defineProperty(globalThis, "scrollTo", {
   value: () => {},
   writable: true,
 });

@@ -20,6 +20,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@fontsource/montserrat": "^5.2.5",
     "vue": "^3.5.32",
     "vue-router": "^4.5.1"
   },
