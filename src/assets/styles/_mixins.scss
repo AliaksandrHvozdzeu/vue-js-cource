@@ -1,0 +1,39 @@
+@use "variables" as *;
+
+@mixin focus-ring($color: $color-primary) {
+  outline: 2px solid $color;
+  outline-offset: 2px;
+}
+
+@mixin uppercase-label($size: $font-size-sm, $spacing: $letter-spacing-sort) {
+  font-size: $size;
+  letter-spacing: $spacing;
+  text-transform: uppercase;
+}
+
+@mixin hover-opacity($opacity: 0.9) {
+  transition: opacity $transition-base;
+
+  &:hover,
+  &:focus-visible {
+    opacity: $opacity;
+  }
+}
+
+@mixin at-md {
+  @media (max-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin at-lg {
+  @media (max-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin at-sm {
+  @media (max-width: $breakpoint-sm) {
+    @content;
+  }
+}
