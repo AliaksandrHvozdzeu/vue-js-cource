@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
+import type { RouteLocationNormalized } from "vue-router";
 import router from "@/router";
 
 describe("router", () => {
@@ -58,6 +59,9 @@ describe("router", () => {
     const scrollBehavior = router.options.scrollBehavior;
 
     expect(scrollBehavior).toBeTypeOf("function");
-    expect(scrollBehavior?.({}, {}, null)).toEqual({ top: 0 });
+    const to = { path: '/' } as RouteLocationNormalized
+    const from = { path: '/' } as RouteLocationNormalized
+
+    expect(scrollBehavior?.(to, from, null)).toEqual({ top: 0 });
   });
 });
